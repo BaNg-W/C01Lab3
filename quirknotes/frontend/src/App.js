@@ -43,19 +43,33 @@ function App() {
       await fetch(`http://localhost:4000/deleteNote/${entry._id}`, {method: 'DELETE'})
       .then(async (response) => {
         if (!response.ok) {
+          alert("Error deleting note.")
           console.log("Server failed:", response.status)
         } else {
-          alert("Note successfully deleted.")
           deleteNoteState(entry._id)
         }
       })
     } catch (error) {
+      alert("Error deleting note.")
       console.log("Error deleting note:", error)
     }
   }
 
-  const deleteAllNotes = () => {
-    // Code for DELETE all notes here
+  const deleteAllNotes = async () => {
+    try {
+      await fetch(`http://localhost:4000/deleteAllNotes`, {method: 'DELETE'})
+      .then(async (response) => {
+        if (!response.ok) {
+          alert("Error deleting all notes.")
+          console.log("Server failed:", response.status)
+        } else {
+          deleteAllNotesState()
+        }
+      })
+    } catch (error) {
+      alert("Error deleting all notes.")
+      console.log("Error deleting all notes:", error)
+    }
   }
 
   
@@ -89,11 +103,12 @@ function App() {
   }
 
   const deleteAllNotesState = () => {
-    // Code for modifying state after DELETE all here
+    setNotes([])
   }
 
   const patchNoteState = (_id, title, content) => {
-    // Code for modifying state after PATCH here
+    setNotes((prevNotes) => prevNotes.filter(note => note._id !== _id))
+    setNotes((prevNotes) => [...prevNotes, {_id, title, content}])
   }
 
   return (
@@ -142,7 +157,7 @@ function App() {
           initialNote={dialogNote}
           closeDialog={closeDialog}
           postNote={postNoteState}
-          // patchNote={patchNoteState}
+          patchNote={patchNoteState}
           />
 
       </header>
